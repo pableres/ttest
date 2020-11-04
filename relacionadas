@@ -1,0 +1,113 @@
+library(haven)
+box_plot_R <- read_sav("C:/Users/pable/Desktop/Doctorado/box plot R.sav")
+View(box_plot_R)
+df<-as.data.frame(box_plot_R)
+names(df)<- c("Tiempo", "Punt")
+head(df)
+df$Tiempofact<-as.factor(df$Tiempo)
+df
+#t test relacionado
+t.test(Punt ~ Tiempo, data = df, paired = TRUE)
+
+library(parameters)
+t.test(Punt ~ Tiempo, data = df, paired = TRUE)%>% 
+  parameters()
+#su tamaño de efecto
+library(lsr)
+cohensD(Punt ~ Tiempo,
+        data = df)
+
+#desgranar los resultados
+library(rstatix)
+df %>%
+  group_by(Tiempo) %>%
+  get_summary_stats(Punt, type = "mean_sd")
+
+library(FSA)
+Summarize(Punt ~ Tiempo,
+          data = df)
+
+#reporte en normas APA directamente
+
+library(apa)
+objetot<-t.test(df$Punt, df$Tiempo, paired = TRUE, alternative = "two.sided")
+t_apa(
+  objetot,
+  es = "cohens_d",
+  es_ci = TRUE,
+  format = c("text"),# "markdown", "rmarkdown", "html", "latex", "latex_math", "docx",
+             #"plotmath"),
+  info = FALSE,
+  print = TRUE
+)
+
+#opciones no paramétricas
+
+wilcox.test(Punt ~ Tiempo,
+            data = df,
+            paired = TRUE,
+            conf.int = TRUE,
+            conf.level = 0.95)
+
+#y sus tamaños de efecto
+
+#Vargha and Delaney A
+library(effsize)
+VD.A(d = df$Punt,
+     f = df$Tiempofact)
+#VDA
+library(rcompanion)
+vda(Punt ~ Tiempo, data=df, ci=TRUE)
+
+#Cliff's delta
+
+library(effsize)
+cliff.delta(d = df$Punt,
+            f = df$Tiempofact)
+
+library(rcompanion)
+cliffDelta(Punt ~ Tiempo, data=df, ci=TRUE)
+
+#r
+library(rcompanion)
+wilcoxonR(x = df$Punt,
+          g = df$Tiempo,
+          ci = TRUE)
+
+ #tau-b
+library(DescTools)
+KendallTauB(x = df$Punt,
+            y = as.numeric(df$Tiempofact),
+            conf.level = 0.95)
+#Freeman's theta
+library(rcompanion)
+freemanTheta(x = df$Punt,
+             g = df$Tiempo,
+             ci = TRUE)
+
+#epsilon-squared
+library(rcompanion)
+epsilonSquared(x = df$Punt,
+               g = df$Tiempo,
+               ci = TRUE)
+
+#aproximaciones bayesianas y robustas
+
+library(statsExpressions)
+expr_t_robust(
+  df,
+  Tiempo,
+  Punt,
+  paired = TRUE,
+  k = 2L,
+  conf.level = 0.95,
+  tr = 0.1,
+  nboot = 100,
+  stat.title = NULL,
+)
+
+#aprox bayesiana
+library(tidyBF)
+
+tbayes<-bf_ttest(data = df, x = Tiempo, y = Punt, paired = TRUE)
+View(tbayes)
