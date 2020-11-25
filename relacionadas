@@ -111,3 +111,57 @@ library(tidyBF)
 
 tbayes<-bf_ttest(data = df, x = Tiempo, y = Punt, paired = TRUE)
 View(tbayes)
+
+install.packages("ggstatsplot")
+library(ggstatsplot)
+ggstatsplot::ggwithinstats(
+  data = df, #tus datos
+  x = Tiempo, #variable agrupación
+  y = Punt, #variable depend
+  type = "np", # parametric" or "nonparametric" or "robust" or "bayes
+  pairwise.comparisons = FALSE, 
+  effsize.type = "unbiased", #tmb biased
+  effsize.noncentral = TRUE,
+  bf.prior = 0.707,
+  bf.message = TRUE,
+  sphericity.correction = TRUE,
+  results.subtitle = TRUE,
+  xlab = "etiqueta del x",
+  ylab = "etiqueta del y",
+  caption = "algo que quieres poner abajo",
+  title = "el título de la gráfica",
+  subtitle = NULL,
+  sample.size.label = TRUE,
+  k = 2, #número de decimales
+  conf.level = 0.95,
+  nboot = 100, 
+  path.point = TRUE,#poner puntito y medias conectados
+  path.mean = TRUE,#idem
+  sort = "none",
+  sort.fun = mean,
+  axes.range.restrict = FALSE,
+  mean.label.size = 3,
+  mean.label.fontface = "bold",
+  mean.label.color = "black",
+  notch = FALSE, #suavizado de la caja
+  notchwidth = 0.5,
+  linetype = "solid", #tmb "blank", "solid", "dashed", "dotted", "dotdash", "longdash", and "twodash")
+  outlier.tagging = FALSE, #marca extremos
+  outlier.shape = 19,
+  outlier.label = NULL,
+  outlier.label.color = "black",
+  outlier.color = "black",
+  outlier.coef = 1.5,
+  mean.plotting = TRUE, #que te muestre la media
+  mean.ci = FALSE, #intervalo de confianza
+  mean.size = 5,
+  mean.color = "darkred",
+  ggtheme = ggplot2::theme_bw(),
+  ggstatsplot.layer = TRUE,
+  package = "RColorBrewer",
+  palette = "Dark2",
+  direction = 1,
+  ggplot.component = NULL,
+  return = "plot",
+  messages = TRUE
+)
